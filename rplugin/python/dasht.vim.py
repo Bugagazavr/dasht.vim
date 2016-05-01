@@ -10,6 +10,9 @@ class Dasht(object):
 
     @neovim.command("Dasht", nargs='*', sync=True)
     def dashtcommand(self, args):
+        self.check_and_spawn_dasht_window(args)
+
+    def check_and_spawn_dasht_window(self, args):
         if self.dasht_window == None:
             self.create_new_dasht_window(args)
         else:
