@@ -7,6 +7,18 @@ class Dasht(object):
         self.nvim = nvim
         self.default_window = None
         self.dasht_window = None
+        self.context = {
+            'ruby': ['Ruby', 'Ruby_on_Rails']
+        }
+
+        try:
+            custom_context = self.nvim.eval('g:dasht_context')
+            modified_context = self.context.copy()
+            modified_context.update(custom_context)
+            self.context = modified_context
+        except neovim.api.nvim.NvimError:
+            pass
+
 
     @neovim.command("Dasht", nargs='*', sync=True)
     def dashtcommand(self, args):
@@ -15,7 +27,14 @@ class Dasht(object):
     @neovim.command("DashtContext", nargs='*', sync=True)
     def dashtcontextcommand(self, args):
         filetype = self.nvim.eval('&filetype')
-        current_args = ["'%s'" % " ".join(args), filetype]
+
+        try:
+            filetype_context = self.context[filetype]
+            filetype_context = ' '.join(filetype_context)
+        except KeyError:
+            filetype_context = filetype
+
+        current_args = ["'%s'" % ' '.join(args), filetype_context]
         self.check_and_spawn_dasht_window(current_args)
 
     def check_and_spawn_dasht_window(self, args):
