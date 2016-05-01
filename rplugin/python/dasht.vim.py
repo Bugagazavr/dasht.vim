@@ -12,6 +12,12 @@ class Dasht(object):
     def dashtcommand(self, args):
         self.check_and_spawn_dasht_window(args)
 
+    @neovim.command("DashtContext", nargs='*', sync=True)
+    def dashtcontextcommand(self, args):
+        filetype = self.nvim.eval('&filetype')
+        current_args = ["'%s'" % " ".join(args), filetype]
+        self.check_and_spawn_dasht_window(current_args)
+
     def check_and_spawn_dasht_window(self, args):
         if self.dasht_window == None:
             self.create_new_dasht_window(args)
